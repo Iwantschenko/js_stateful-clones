@@ -31,26 +31,29 @@ function clearObj(state) {
 
 function transformStateWithClones(state = {}, actions) {
   const stateHistory = [state];
+  let editedObj = {};
 
   for (const action of actions) {
     switch (action.type) {
       case 'addProperties':
-        stateHistory.push(
-          addToObj(stateHistory[stateHistory.length - 1], action.extraData),
+        editedObj = addToObj(
+          stateHistory[stateHistory.length - 1],
+          action.extraData,
         );
         break;
       case 'removeProperties':
-        stateHistory.push(
-          removeFromObj(
-            stateHistory[stateHistory.length - 1],
-            action.keysToRemove,
-          ),
+        editedObj = removeFromObj(
+          stateHistory[stateHistory.length - 1],
+          action.keysToRemove,
         );
         break;
       case 'clear':
-        stateHistory.push(clearObj(stateHistory[stateHistory.length - 1]));
+        editedObj = clearObj(stateHistory[stateHistory.length - 1]);
         break;
+      default:
+        throw new Error('error');
     }
+    stateHistory.push(editedObj);
   }
 
   return stateHistory.slice(1);
